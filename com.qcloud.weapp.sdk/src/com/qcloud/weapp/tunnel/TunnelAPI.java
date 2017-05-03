@@ -106,7 +106,18 @@ class TunnelAPI {
 			if (body.getInt("code") != 0) {
 				throw new Exception(String.format("信道服务调用失败：#%d - %s", body.get("code"), body.get("message")));
 			}
-			return body.has("data") ? new JSONObject(body.getString("data")) : null;
+			JSONObject dataJO = null;
+			if(body.has("data"))
+			{
+				if(body.get("data") instanceof String)
+				{
+					dataJO = new JSONObject(body.getString("data"));
+				}else if(body.get("data") instanceof JSONObject)
+				{
+					dataJO = body.getJSONObject("data");
+				}
+			}
+			return dataJO;
 		} catch (JSONException e) {
 			throw new Exception("信道服务器响应格式错误，无法解析 JSON 字符串", e);
 		}
